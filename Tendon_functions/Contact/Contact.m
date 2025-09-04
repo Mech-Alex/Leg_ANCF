@@ -8,7 +8,7 @@ function [Kc,Fc,Gap,GapMax] = Contact(Body1,Body2,ContactType,ContactVariable,Co
        GapMax.area = NaN;
     else 
         
-        addpath("Contact\ContactType\");
+        addpath("Tendon_functions\Contact\ContactType\");
         if ContactType == "Penalty"
            ContactType = @Penalty;
         elseif ContactType == "NitscheLin"

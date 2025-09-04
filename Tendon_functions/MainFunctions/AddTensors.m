@@ -1,6 +1,6 @@
 function Body = AddTensors(Body)
     
-    path = 'TensorDerivations\' + Body.ElementType + '\' ;
+    path = 'Tendon_functions\TensorDerivations\' + Body.ElementType + '\' ;
     
 
     % Creation of temporal folder   
@@ -18,7 +18,7 @@ function Body = AddTensors(Body)
     end
     
     % Add shape function
-    ShapeFunctionFolder = fullfile('TensorDerivations', Body.ElementType, 'Matlab', 'ShapeFunctions', Body.ElementName);
+    ShapeFunctionFolder = fullfile('Tendon_functions\TensorDerivations', Body.ElementType, 'Matlab', 'ShapeFunctions', Body.ElementName);
     copyfile(fullfile(ShapeFunctionFolder, '*'), bodyFolder, 'f');  % Copy all files from source to bodyFolder
     
     % Add files for inner energy calculations based on AceGen
@@ -71,7 +71,7 @@ function Body = AddTensors(Body)
      end
 
      % Add files for inner energy calculations based on Matlab
-     srcFolder = fullfile(pwd, 'MaterialsSecondKirhhoff');
+     srcFolder = fullfile(pwd, 'Tendon_functions\MaterialsSecondKirhhoff');
      srcFile = fullfile(srcFolder, Body.MaterialName + ".m"); 
      destFile = fullfile(bodyFolder, 'PiolaSecondTensor.m'); % Material check has already done in 'Materials.m'
      copyfile(srcFile, destFile, 'f'); % force overwrite

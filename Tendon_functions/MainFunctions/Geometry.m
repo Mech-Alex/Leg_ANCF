@@ -42,7 +42,7 @@ function Body = Geometry(Body,CSName,ApproximationScheme)
                end  
     end    
     
-    addpath('GaussPoints');  
+    addpath('Tendon_functions\GaussPoints');  
     Body = GausPointsApprox(Body,CSName,ApproximationScheme);
 
     

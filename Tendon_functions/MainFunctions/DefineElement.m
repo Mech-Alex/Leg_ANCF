@@ -1,6 +1,6 @@
 function Body = DefineElement(Body,ElementType,SubType,ElementName,Modification)
     
-    addpath('ElementData')
+    addpath('Tendon_functions\ElementData')
     availbletypes = {'Beam'};
 
     if ismember(ElementType,availbletypes)

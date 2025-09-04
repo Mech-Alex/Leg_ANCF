@@ -6,7 +6,7 @@ function Body = GausPointsApprox(Body,CSName,ApproximationScheme)
     num = Body.ElementNodes;
         
     if ApproximationScheme == "Poigen"
-       addpath("CrossSections") 
+       addpath("Tendon_functions\CrossSections") 
        run(CSName); 
        % Deg=input('Input Approximation degree (1 or above): ');      % Approximation degree for Green's formula    
        
