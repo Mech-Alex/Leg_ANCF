@@ -12,7 +12,7 @@ function PostProcessing(Body,Results,visDeformed,visInitial)
     for k=1:size(Results,1) 
       fprintf('%10.8f & %10.8f & %10.8f  \n',Results(k,6:8))
     end
-    
+
     
     if (visDeformed~=true) && (visInitial~=true) 
         disp('No visualization')

@@ -66,10 +66,15 @@ function Body = CreateAllBC(Body, Force, Displacement, Boundary) % Creates bound
         DofsDispl = [DofsDispl 3];
     end
 
+
     FixedInd = feval(xlocName,DofsAtNode,NodalFixed,Dofs);
     DisplInd = feval(xlocName,DofsAtNode,NodalDispl,DofsDispl);
+    
+    % Temporary fixing all slopes too
+    %SlopeInd = feval(xlocName,DofsAtNode,NodalDispl,[4 5 6 7 8 9]);
 
-    bcInd = [FixedInd DisplInd];
+    bcInd = [FixedInd DisplInd];  
+    %bcInd = [FixedInd DisplInd SlopeInd];
 
 
     if bcInd~=0
