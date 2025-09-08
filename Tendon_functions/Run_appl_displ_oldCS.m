@@ -15,9 +15,9 @@ Body1 = DefineElement(Body1,"Beam","ANCF",3333,"None");
 Body2 = DefineElement(Body2,"Beam","ANCF",3333,"None");  
 Body3 = DefineElement(Body3,"Beam","ANCF",3333,"None"); 
 % Material models: GOH (GOH), Neo-Hookean (Neo), 2- and 5- constant Mooney-Rivlin (Mooney2, Mooney5),  Kirhhoff-Saint-Venant (KS).
-Body1 = Materials(Body1,"Neo","Alex"); 
-Body2 = Materials(Body2,"Neo","Alex"); 
-Body3 = Materials(Body3,'Neo',"Alex");
+Body1 = Materials(Body1,"Neo","Sol_old"); 
+Body2 = Materials(Body2,"Neo","MG_old"); 
+Body3 = Materials(Body3,'Neo',"LG_old");
 % Geometry
 Body1 = Geometry(Body1,"ten_Sol_3","Poigen");  % Cross Sections: Rectangular, Oval, C, Tendon
 Body2 = Geometry(Body2,"ten_MG_3","Poigen");  % Itegration Scheme: Poigen, Standard
@@ -59,12 +59,12 @@ Body3.Rotation.Y = 0;
 Body3.Rotation.Z = 0;
 
 % ########## Create FE Models #############################################
-nn=1
-ElementNumber1 =nn;
+%nn=1
+ElementNumber1 =4;
 Body1 = CreateFEM(Body1,ElementNumber1);
-ElementNumber2 = 4*nn;
+ElementNumber2 = 4;
 Body2 = CreateFEM(Body2,ElementNumber2);
-ElementNumber3 =4* nn;
+ElementNumber3 =4;
 Body3 = CreateFEM(Body3,ElementNumber3);
 
 % ########## Calculation adjustments ######################################
@@ -95,9 +95,14 @@ Force = 0; % Dirichlet boundary conditions
 
 % Body1 
 % Force (applied locally, shift and curvature are accounted automaticaly)
-Displacement1.Maginutude.X = 0.00110301;  % Axial displacement appleed to body1 end
-Displacement1.Maginutude.Y =  -0.00000329;  
-Displacement1.Maginutude.Z = -0.00000504;  
+ Displacement1.Maginutude.X = 0.00136154;  % Axial displacement appleed to body1 end
+ Displacement1.Maginutude.Y =  -0.00000280;  
+ Displacement1.Maginutude.Z = -0.00000395;  
+
+%Displacement1.Maginutude.X = 2e-3;  % Axial displacement appleed to body1 end
+%Displacement1.Maginutude.Y =  0;  
+%Displacement1.Maginutude.Z = 0;  
+
 
 Displacement1.Position.X = Body1.Length.X;  % Elongation
 Displacement1.Position.Y = 0;  
@@ -107,7 +112,7 @@ Force1.Maginutude.X = 0;  % Elongation
 Force1.Maginutude.Y = 0;  
 Force1.Maginutude.Z = 0;  
 
-Force1.Position.X = 0;  % Elongation
+Force1.Position.X = Body1.Length.X;  % Elongation
 Force1.Position.Y = 0;  
 Force1.Position.Z = 0; 
 
@@ -120,9 +125,13 @@ Boundary1.Type = "full"; % there are s1everal types: full, reduced, positions, n
 
 % Body2
 %Force2.Maginutude.X = Force*frac2;  % Elongation
-Displacement2.Maginutude.X = 0.00091238;
-Displacement2.Maginutude.Y = 0.00000059;  
-Displacement2.Maginutude.Z = 0.00000014;  
+ Displacement2.Maginutude.X = 0.00082836;
+ Displacement2.Maginutude.Y = 0.00000053;  
+ Displacement2.Maginutude.Z = 0.00000013;  
+
+%Displacement2.Maginutude.X = 1e-3;
+%Displacement2.Maginutude.Y = 0;  
+%Displacement2.Maginutude.Z = 0;  
 
 Displacement2.Position.X = Body2.Length.X;  % Elongation
 Displacement2.Position.Y = 0;  
@@ -146,9 +155,9 @@ Boundary2.Type = "full"; % there are several types: full, reduced, positions, no
 
 % Body3
 %Force3.Maginutude.X = Force*frac3;  % Elongation
-Displacement3.Maginutude.X = 0;  % Elongation
-Displacement3.Maginutude.Y = 0;  
-Displacement3.Maginutude.Z = 0;  
+Displacement3.Maginutude.X = 0.00056718;  % Elongation
+Displacement3.Maginutude.Y = -0.00000191;  
+Displacement3.Maginutude.Z = 0.00000256;  
  
 Displacement3.Position.X = Body3.Length.X;  % Elongation
 Displacement3.Position.Y = 0;  
@@ -180,7 +189,7 @@ ContactVariable = 1e1;
 % %####################### Solving ######################################## 
 steps = 20;  % sub-loading steps
 titertot=0;  
-Re=1e-5;                   % Stopping criterion for residual
+Re=1e-8;                   % Stopping criterion for residual
 imax=20;                      % Maximum number of iterations for Newton's method 
 SolutionRegType = "off";  % Regularization type: off, penaltyK, penaltyKf, Tikhonov
 ContactRegType = "off";
@@ -439,7 +448,8 @@ visualization(Body3,Body3.q,'blue',true);
 
         %deltaf=ff_bc/norm(Fext(bc)); 
         %u_bc = Regularization(K_bc,ff_bc,SolutionRegType); 
-        deltaf=ff_bc/norm(ff); 
+        %deltaf=ff_bc/norm(ff); 
+        deltaf=ff_bc; 
         u_bc = Regularization(K_bc,ff_bc,SolutionRegType); 
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -464,6 +474,7 @@ visualization(Body3,Body3.q,'blue',true);
 
 
         if printStatus(deltaf, u_bc, Re, 1, ii, imax, steps, titertot, Gap)
+            
             break;  
         end 
 

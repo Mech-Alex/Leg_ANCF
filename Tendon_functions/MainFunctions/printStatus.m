@@ -11,11 +11,13 @@ function status = printStatus(deltaf, u_bc, Re, i, ii, imax, steps, titertot, Ga
      if  nargin < 9 % Gap is optional
          Gap= NaN;
      end   
-        
-     if  all(abs(deltaf) < Re) || ... % standard condition of exit
-         (norm(u_bc)<Re^2) || abs(norm(u_bc) - previousDisp)<Re^2 || ... % stop when the change is too small
-         (abs(norm(u_bc) - previousDisp)<Re && abs(norm(u_bc) - previousDisp_2)<Re) || ... % stop when small changes are repeating
-         ( all(abs(deltaf) - previousForce)<Re && abs(norm(u_bc) - previousDisp)<Re ) % additional condition for exit  
+
+     % if  all(abs(deltaf) < Re) || ... % standard condition of exit
+     %     (norm(u_bc)<Re^2) || abs(norm(u_bc) - previousDisp)<Re^2 || ... % stop when the change is too small
+     %     (abs(norm(u_bc) - previousDisp)<Re && abs(norm(u_bc) - previousDisp_2)<Re) || ... % stop when small changes are repeating
+     %     ( all(abs(deltaf) - previousForce)<Re && abs(norm(u_bc) - previousDisp)<Re ) % additional condition for exit  
+
+     if  all(abs(deltaf) < Re) 
                     
          if ~isnan(Gap)
              fprintf('Convergence: %10.4f, Displacements norm: %10.4f, Total gap: %10.7f\n', norm(abs(deltaf)), norm(u_bc), Gap);            

@@ -58,7 +58,7 @@ Body3.Rotation.Y = 0;
 Body3.Rotation.Z = 0;
 % ########## Create FE Models #############################################
 
-ElemSlave = 1;
+ElemSlave = 4;
 ElemMaster = 4;
 Body1 = CreateFEM(Body1,ElemSlave);
 Body2 = CreateFEM(Body2,ElemMaster);
@@ -91,13 +91,13 @@ Boundary1.Position.X = 0;
 Boundary1.Type = BoundaryType; % there are s1everal types: full, reduced, positions, none
 
 % Body2
-Force2.Maginutude.X = 1.1*Force;  % Elongation
+Force2.Maginutude.X = 100;  % Elongation
 Force2.Position.X = Body2.Length.X;  % Elongation
 Boundary2.Position.X = 0;  
 Boundary2.Type = BoundaryType; % there are several types: full, reduced, positions, none
 
 % Body3
-Force3.Maginutude.X = 0;  % Elongation
+Force3.Maginutude.X = 100;  % Elongation
 Force3.Position.X = Body3.Length.X;  % Elongation
 Boundary3.Position.X = 0;  
 Boundary3.Type = BoundaryType; % there are several types: full, reduced, positions, none
