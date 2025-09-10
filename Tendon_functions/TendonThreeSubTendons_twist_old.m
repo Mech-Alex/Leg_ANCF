@@ -58,8 +58,8 @@ Body3.Rotation.Y = 0;
 Body3.Rotation.Z = 0;
 % ########## Create FE Models #############################################
 
-ElemSlave = 4;
-ElemMaster = 4;
+ElemSlave = 2;
+ElemMaster = 2;
 Body1 = CreateFEM(Body1,ElemSlave);
 Body2 = CreateFEM(Body2,ElemMaster);
 Body3 = CreateFEM(Body3,ElemMaster);
@@ -103,7 +103,7 @@ Boundary3.Position.X = 0;
 Boundary3.Type = BoundaryType; % there are several types: full, reduced, positions, none
 
 % ########## Contact characteristics ######################################
-ContactType = "None"; % Options: "None", "Penalty", "NitscheLin"...
+ContactType = "Penalty"; % Options: "None", "Penalty", "NitscheLin"...
 
 % %####################### Solving ######################################## 
 steps = 1;                   % sub-loading steps

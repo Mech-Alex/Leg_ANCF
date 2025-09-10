@@ -85,11 +85,12 @@ function Body = CreateAllBC(Body, Force, Displacement, Boundary) % Creates bound
     
     % Applying non-zero displacements  
     
-    DisplacementVector = [Displacement.Maginutude.X; Displacement.Maginutude.Y; Displacement.Maginutude.Z];
-    Applied_bc(DisplInd) = DisplacementVector;
+    Body.DisplacementVector = [Displacement.Maginutude.X; Displacement.Maginutude.Y; Displacement.Maginutude.Z];
+    Applied_bc(DisplInd) = Body.DisplacementVector;
     
     Body.applied_disp = Applied_bc;
     Body.bcInd = bcInd;
+    Body.DisplInd = DisplInd;
     
     % Force application    
     Fext = zeros(TotalDofs,1); % Initialize vector of ext forces

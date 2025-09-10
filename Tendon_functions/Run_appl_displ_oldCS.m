@@ -60,11 +60,11 @@ Body3.Rotation.Z = 0;
 
 % ########## Create FE Models #############################################
 %nn=1
-ElementNumber1 =4;
+ElementNumber1 =1;
 Body1 = CreateFEM(Body1,ElementNumber1);
-ElementNumber2 = 4;
+ElementNumber2 = 1;
 Body2 = CreateFEM(Body2,ElementNumber2);
-ElementNumber3 =4;
+ElementNumber3 =1;
 Body3 = CreateFEM(Body3,ElementNumber3);
 
 % ########## Calculation adjustments ######################################
@@ -95,13 +95,13 @@ Force = 0; % Dirichlet boundary conditions
 
 % Body1 
 % Force (applied locally, shift and curvature are accounted automaticaly)
- Displacement1.Maginutude.X = 0.00136154;  % Axial displacement appleed to body1 end
- Displacement1.Maginutude.Y =  -0.00000280;  
- Displacement1.Maginutude.Z = -0.00000395;  
+% Displacement1.Maginutude.X = 0.00136154;  % Axial displacement appleed to body1 end
+% Displacement1.Maginutude.Y =  -0.00000280;  
+% Displacement1.Maginutude.Z = -0.00000395;  
 
-%Displacement1.Maginutude.X = 2e-3;  % Axial displacement appleed to body1 end
-%Displacement1.Maginutude.Y =  0;  
-%Displacement1.Maginutude.Z = 0;  
+Displacement1.Maginutude.X = 1e-3;  % Axial displacement appleed to body1 end
+Displacement1.Maginutude.Y =  0;  
+Displacement1.Maginutude.Z = 0;  
 
 
 Displacement1.Position.X = Body1.Length.X;  % Elongation
@@ -125,13 +125,13 @@ Boundary1.Type = "full"; % there are s1everal types: full, reduced, positions, n
 
 % Body2
 %Force2.Maginutude.X = Force*frac2;  % Elongation
- Displacement2.Maginutude.X = 0.00082836;
- Displacement2.Maginutude.Y = 0.00000053;  
- Displacement2.Maginutude.Z = 0.00000013;  
+% Displacement2.Maginutude.X = 0.00082836;
+% Displacement2.Maginutude.Y = 0.00000053;  
+% Displacement2.Maginutude.Z = 0.00000013;  
 
-%Displacement2.Maginutude.X = 1e-3;
-%Displacement2.Maginutude.Y = 0;  
-%Displacement2.Maginutude.Z = 0;  
+Displacement2.Maginutude.X = 2e-3;
+Displacement2.Maginutude.Y = 0;  
+Displacement2.Maginutude.Z = 0;  
 
 Displacement2.Position.X = Body2.Length.X;  % Elongation
 Displacement2.Position.Y = 0;  
@@ -155,9 +155,13 @@ Boundary2.Type = "full"; % there are several types: full, reduced, positions, no
 
 % Body3
 %Force3.Maginutude.X = Force*frac3;  % Elongation
-Displacement3.Maginutude.X = 0.00056718;  % Elongation
-Displacement3.Maginutude.Y = -0.00000191;  
-Displacement3.Maginutude.Z = 0.00000256;  
+% Displacement3.Maginutude.X = 0.00056718;  % Elongation
+% Displacement3.Maginutude.Y = -0.00000191;  
+% Displacement3.Maginutude.Z = 0.00000256;  
+
+Displacement3.Maginutude.X = 3e-3;  % Elongation
+Displacement3.Maginutude.Y = 0;  
+Displacement3.Maginutude.Z = 0;  
  
 Displacement3.Position.X = Body3.Length.X;  % Elongation
 Displacement3.Position.Y = 0;  
@@ -187,7 +191,7 @@ ContactVariable = 1e1;
 % Body3.ContactRole = "slave";
 
 % %####################### Solving ######################################## 
-steps = 20;  % sub-loading steps
+steps = 3;  % sub-loading steps
 titertot=0;  
 Re=1e-8;                   % Stopping criterion for residual
 imax=20;                      % Maximum number of iterations for Newton's method 
@@ -205,29 +209,29 @@ Body1 = CreateAllBC(Body1, Force1, Displacement1, Boundary1); % Application of D
 Body2 = CreateAllBC(Body2, Force2, Displacement2, Boundary2); % Application of Dirichlet boundary conditions
 Body3 = CreateAllBC(Body3, Force3, Displacement3, Boundary3); % Application of Dirichlet boundary conditions
 
-% visualization(Body1,Body1.q,'cyan',true);
-% visualization(Body2,Body2.q,'red',true);
-% visualization(Body3,Body3.q,'blue',true);
+visualization(Body1,Body1.q,'cyan',true);
+visualization(Body2,Body2.q,'red',true);
+visualization(Body3,Body3.q,'blue',true);
 
 % Transformation of body DOF indentifiers to global system
 
 Body2bcIndGlobal = Body2.bcInd + Body1.TotalDofs;
 Body3bcIndGlobal = Body3.bcInd + Body1.TotalDofs+ Body2.TotalDofs;
 
-Applied_disp = [Body1.applied_disp Body2.applied_disp Body3.applied_disp];
 Applied_zeros = zeros(1,Body1.TotalDofs+Body2.TotalDofs+Body2.TotalDofs);
 bcInd = [Body1.bcInd Body2bcIndGlobal Body3bcIndGlobal];
 
 %style = "cubic";
-%style = "linear";
+style = "linear";
 %START NEWTON'S METHOD   
-%for i=1:steps
+for i=1:steps
     
-    % Body1 = SubLoading(Body1, i, steps, style); 
-    % Body2 = SubLoading(Body2, i, steps, style); 
-    % Body3 = SubLoading(Body3, i, steps, style); 
+    Body1 = SubLoadingDispl(Body1, i, steps, style); 
+    Body2 = SubLoadingDispl(Body2, i, steps, style); 
+    Body3 = SubLoadingDispl(Body3, i, steps, style); 
 
- 
+    Applied_disp = [Body1.applied_disp Body2.applied_disp Body3.applied_disp];
+
     Fext1 = Body1.Fext;
     Fext2 = Body2.Fext;
     Fext3 = Body3.Fext;
@@ -480,7 +484,7 @@ visualization(Body3,Body3.q,'blue',true);
 
     end
    
-
+end 
 
     %Pick nodal displacements from result vector
     xlocName1 = 'xloc' + Body1.ElementType;
