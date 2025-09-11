@@ -23,7 +23,7 @@ Body1 = Geometry(Body1,"ten_Sol_3","Poigen");  % Cross Sections: Rectangular, Ov
 Body2 = Geometry(Body2,"ten_MG_3","Poigen");  % Itegration Scheme: Poigen, Standard
 Body3 = Geometry(Body3,"ten_LG_3","Poigen");  % Itegration Scheme: Poigen, Standard
 % ########### Set Bodies positions ########################################
-angle = 0;
+angle = 20;
 % Tendon twist
 Center1 = [Body1.CSCenterY, Body1.CSCenterZ];
 Center2 = [Body2.CSCenterY, Body2.CSCenterZ];
@@ -60,11 +60,11 @@ Body3.Rotation.Z = 0;
 
 % ########## Create FE Models #############################################
 %nn=1
-ElementNumber1 =1;
+ElementNumber1 =4;
 Body1 = CreateFEM(Body1,ElementNumber1);
-ElementNumber2 = 1;
+ElementNumber2 = 4;
 Body2 = CreateFEM(Body2,ElementNumber2);
-ElementNumber3 =1;
+ElementNumber3 = 4;
 Body3 = CreateFEM(Body3,ElementNumber3);
 
 % ########## Calculation adjustments ######################################
@@ -121,7 +121,7 @@ Boundary1.Position.X = 0;
 Boundary1.Position.Y = 0;
 Boundary1.Position.Z = 0;
 
-Boundary1.Type = "full"; % there are s1everal types: full, reduced, positions, none
+Boundary1.Type = "reduced"; % there are s1everal types: full, reduced, positions, none
 
 % Body2
 %Force2.Maginutude.X = Force*frac2;  % Elongation
@@ -151,7 +151,7 @@ Boundary2.Position.X = 0;
 Boundary2.Position.Y = 0;
 Boundary2.Position.Z = 0;
 
-Boundary2.Type = "full"; % there are several types: full, reduced, positions, none
+Boundary2.Type = "reduced"; % there are several types: full, reduced, positions, none
 
 % Body3
 %Force3.Maginutude.X = Force*frac3;  % Elongation
@@ -181,7 +181,7 @@ Boundary3.Position.X = 0;
 Boundary3.Position.Y = 0;
 Boundary3.Position.Z = 0;
 
-Boundary3.Type = "full"; % there are several types: full, reduced, positions, none
+Boundary3.Type = "reduced"; % there are several types: full, reduced, positions, none
 
 % ########## Contact characteristics ######################################
 ContactType = "None"; % Options: "None", "Penalty", "NitscheLin"...
@@ -191,7 +191,7 @@ ContactVariable = 1e1;
 % Body3.ContactRole = "slave";
 
 % %####################### Solving ######################################## 
-steps = 3;  % sub-loading steps
+steps = 4;  % sub-loading steps
 titertot=0;  
 Re=1e-8;                   % Stopping criterion for residual
 imax=20;                      % Maximum number of iterations for Newton's method 
@@ -209,9 +209,9 @@ Body1 = CreateAllBC(Body1, Force1, Displacement1, Boundary1); % Application of D
 Body2 = CreateAllBC(Body2, Force2, Displacement2, Boundary2); % Application of Dirichlet boundary conditions
 Body3 = CreateAllBC(Body3, Force3, Displacement3, Boundary3); % Application of Dirichlet boundary conditions
 
-visualization(Body1,Body1.q,'cyan',true);
-visualization(Body2,Body2.q,'red',true);
-visualization(Body3,Body3.q,'blue',true);
+% visualization(Body1,Body1.q,'cyan',true);
+% visualization(Body2,Body2.q,'red',true);
+% visualization(Body3,Body3.q,'blue',true);
 
 % Transformation of body DOF indentifiers to global system
 
@@ -355,9 +355,9 @@ for i=1:steps
         titer=toc;
         titertot=titertot+titer;
 
-visualization(Body1,Body1.q,'cyan',true);
-visualization(Body2,Body2.q,'red',true);
-visualization(Body3,Body3.q,'blue',true);
+% visualization(Body1,Body1.q,'cyan',true);
+% visualization(Body2,Body2.q,'red',true);
+% visualization(Body3,Body3.q,'blue',true);
 
     for ii=1:imax
         tic;
