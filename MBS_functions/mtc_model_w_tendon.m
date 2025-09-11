@@ -67,11 +67,11 @@ end
 
 % Force of the serial elastic element SEE
 l_SEE = abs(l_MTC-l_CE); % SEE length
-Tendon_displacement = l_SEE - mus_Param.SEE.l_SEE0
+Tendon_displacement = l_SEE - mus_Param.SEE.l_SEE0;
 %if (l_SEE>mus_Param.SEE.l_SEE0) 
 if (Tendon_displacement>0) 
     %mus_Param.SEE.l_SEE0;
-    F_SEE = Achilles_AceGen(Tendon_displacement);  
+    F_SEE = Achilles(Tendon_displacement);  
 else %slack length
     F_SEE = 0;
 end

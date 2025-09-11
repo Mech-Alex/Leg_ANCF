@@ -1,5 +1,7 @@
-clc,clear,close all;
-format long
+function F_Achilles = Achilles(Tendon_displacement)    
+
+steps = max(round(Tendon_displacement/2e-4), 1);  % sub-loading steps
+
 addpath("Tendon_functions\CrossSections");
 addpath("Tendon_functions\MainFunctions")
 addpath("Tendon_functions\MeshFunctions")
@@ -15,15 +17,15 @@ Body1 = DefineElement(Body1,"Beam","ANCF",3333,"None");
 Body2 = DefineElement(Body2,"Beam","ANCF",3333,"None");  
 Body3 = DefineElement(Body3,"Beam","ANCF",3333,"None"); 
 % Material models: GOH (GOH), Neo-Hookean (Neo), 2- and 5- constant Mooney-Rivlin (Mooney2, Mooney5),  Kirhhoff-Saint-Venant (KS).
-Body1 = Materials(Body1,"Neo","Sol_old"); 
-Body2 = Materials(Body2,"Neo","MG_old"); 
-Body3 = Materials(Body3,'Neo',"LG_old");
+Body1 = Materials(Body1,"Neo","Alex"); 
+Body2 = Materials(Body2,"Neo","Alex"); 
+Body3 = Materials(Body3,'Neo',"Alex");
 % Geometry
 Body1 = Geometry(Body1,"ten_Sol_3","Poigen");  % Cross Sections: Rectangular, Oval, C, Tendon
 Body2 = Geometry(Body2,"ten_MG_3","Poigen");  % Itegration Scheme: Poigen, Standard
 Body3 = Geometry(Body3,"ten_LG_3","Poigen");  % Itegration Scheme: Poigen, Standard
 % ########### Set Bodies positions ########################################
-angle = 0;
+angle = 20;
 % Tendon twist
 Center1 = [Body1.CSCenterY, Body1.CSCenterZ];
 Center2 = [Body2.CSCenterY, Body2.CSCenterZ];
@@ -60,11 +62,11 @@ Body3.Rotation.Z = 0;
 
 % ########## Create FE Models #############################################
 %nn=1
-ElementNumber1 =2;
+ElementNumber1 =4;
 Body1 = CreateFEM(Body1,ElementNumber1);
-ElementNumber2 = 2;
+ElementNumber2 = 4;
 Body2 = CreateFEM(Body2,ElementNumber2);
-ElementNumber3 =2;
+ElementNumber3 = 4;
 Body3 = CreateFEM(Body3,ElementNumber3);
 
 % ########## Calculation adjustments ######################################
@@ -95,11 +97,8 @@ Force = 0; % Dirichlet boundary conditions
 
 % Body1 
 % Force (applied locally, shift and curvature are accounted automaticaly)
-% Displacement1.Maginutude.X = 0.00136154;  % Axial displacement appleed to body1 end
-% Displacement1.Maginutude.Y =  -0.00000280;  
-% Displacement1.Maginutude.Z = -0.00000395;  
 
-Displacement1.Maginutude.X = 1e-3;  % Axial displacement appleed to body1 end
+Displacement1.Maginutude.X = Tendon_displacement;  % Axial displacement appleed to body1 end
 Displacement1.Maginutude.Y =  0;  
 Displacement1.Maginutude.Z = 0;  
 
@@ -121,15 +120,12 @@ Boundary1.Position.X = 0;
 Boundary1.Position.Y = 0;
 Boundary1.Position.Z = 0;
 
-Boundary1.Type = "full"; % there are s1everal types: full, reduced, positions, none
+Boundary1.Type = "reduced"; % there are s1everal types: full, reduced, positions, none
 
 % Body2
 %Force2.Maginutude.X = Force*frac2;  % Elongation
-% Displacement2.Maginutude.X = 0.00082836;
-% Displacement2.Maginutude.Y = 0.00000053;  
-% Displacement2.Maginutude.Z = 0.00000013;  
 
-Displacement2.Maginutude.X = 1e-3;
+Displacement2.Maginutude.X = Tendon_displacement;
 Displacement2.Maginutude.Y = 0;  
 Displacement2.Maginutude.Z = 0;  
 
@@ -151,15 +147,12 @@ Boundary2.Position.X = 0;
 Boundary2.Position.Y = 0;
 Boundary2.Position.Z = 0;
 
-Boundary2.Type = "full"; % there are several types: full, reduced, positions, none
+Boundary2.Type = "reduced"; % there are several types: full, reduced, positions, none
 
 % Body3
 %Force3.Maginutude.X = Force*frac3;  % Elongation
-% Displacement3.Maginutude.X = 0.00056718;  % Elongation
-% Displacement3.Maginutude.Y = -0.00000191;  
-% Displacement3.Maginutude.Z = 0.00000256;  
 
-Displacement3.Maginutude.X = 1e-3;  % Elongation
+Displacement3.Maginutude.X = Tendon_displacement;  % Elongation
 Displacement3.Maginutude.Y = 0;  
 Displacement3.Maginutude.Z = 0;  
  
@@ -181,17 +174,16 @@ Boundary3.Position.X = 0;
 Boundary3.Position.Y = 0;
 Boundary3.Position.Z = 0;
 
-Boundary3.Type = "full"; % there are several types: full, reduced, positions, none
+Boundary3.Type = "reduced"; % there are several types: full, reduced, positions, none
 
 % ########## Contact characteristics ######################################
-ContactType = "Penalty"; % Options: "None", "Penalty", "NitscheLin"...
+ContactType = "None"; % Options: "None", "Penalty", "NitscheLin"...
 ContactVariable = 1e1;
 % Body1.ContactRole = "slave"; % Options: "master", "slave"
 % Body2.ContactRole = "master";
 % Body3.ContactRole = "slave";
 
 % %####################### Solving ######################################## 
-steps = 20;  % sub-loading steps
 titertot=0;  
 Re=1e-8;                   % Stopping criterion for residual
 imax=20;                      % Maximum number of iterations for Newton's method 
@@ -209,29 +201,29 @@ Body1 = CreateAllBC(Body1, Force1, Displacement1, Boundary1); % Application of D
 Body2 = CreateAllBC(Body2, Force2, Displacement2, Boundary2); % Application of Dirichlet boundary conditions
 Body3 = CreateAllBC(Body3, Force3, Displacement3, Boundary3); % Application of Dirichlet boundary conditions
 
-visualization(Body1,Body1.q,'cyan',true);
-visualization(Body2,Body2.q,'red',true);
-visualization(Body3,Body3.q,'blue',true);
+% visualization(Body1,Body1.q,'cyan',true);
+% visualization(Body2,Body2.q,'red',true);
+% visualization(Body3,Body3.q,'blue',true);
 
 % Transformation of body DOF indentifiers to global system
 
 Body2bcIndGlobal = Body2.bcInd + Body1.TotalDofs;
 Body3bcIndGlobal = Body3.bcInd + Body1.TotalDofs+ Body2.TotalDofs;
 
-Applied_disp = [Body1.applied_disp Body2.applied_disp Body3.applied_disp];
 Applied_zeros = zeros(1,Body1.TotalDofs+Body2.TotalDofs+Body2.TotalDofs);
 bcInd = [Body1.bcInd Body2bcIndGlobal Body3bcIndGlobal];
 
 %style = "cubic";
-%style = "linear";
+style = "linear";
 %START NEWTON'S METHOD   
-%for i=1:steps
+for i=1:steps
     
-    % Body1 = SubLoading(Body1, i, steps, style); 
-    % Body2 = SubLoading(Body2, i, steps, style); 
-    % Body3 = SubLoading(Body3, i, steps, style); 
+    Body1 = SubLoadingDispl(Body1, i, steps, style); 
+    Body2 = SubLoadingDispl(Body2, i, steps, style); 
+    Body3 = SubLoadingDispl(Body3, i, steps, style); 
 
- 
+    Applied_disp = [Body1.applied_disp Body2.applied_disp Body3.applied_disp];
+
     Fext1 = Body1.Fext;
     Fext2 = Body2.Fext;
     Fext3 = Body3.Fext;
@@ -355,9 +347,9 @@ bcInd = [Body1.bcInd Body2bcIndGlobal Body3bcIndGlobal];
         titer=toc;
         titertot=titertot+titer;
 
-visualization(Body1,Body1.q,'cyan',true);
-visualization(Body2,Body2.q,'red',true);
-visualization(Body3,Body3.q,'blue',true);
+% visualization(Body1,Body1.q,'cyan',true);
+% visualization(Body2,Body2.q,'red',true);
+% visualization(Body3,Body3.q,'blue',true);
 
     for ii=1:imax
         tic;
@@ -484,7 +476,7 @@ visualization(Body3,Body3.q,'blue',true);
 
     end
    
-
+end 
 
     %Pick nodal displacements from result vector
     xlocName1 = 'xloc' + Body1.ElementType;
@@ -511,21 +503,22 @@ initial3 = Body3.ForceVectorInit;
 % % POST PROCESSING ###############################################
 hold on
 %axis equal
-xlabel('\it{X}','FontName','Times New Roman','FontSize',[20])
-ylabel('\it{Y}','FontName','Times New Roman','FontSize',[20]),
-zlabel('Z [m]','FontName','Times New Roman','FontSize',[20]);
+xlabel('\it{X}','FontName','Times New Roman','FontSize',20);
+ylabel('\it{Y}','FontName','Times New Roman','FontSize',20);
+zlabel('Z [m]','FontName','Times New Roman','FontSize',20);
 % visualization(Body1,Body1.q,'cyan',true);
 % visualization(Body2,Body2.q,'none',true);
 % visualization(Body3,Body3.q,'blue',true);
- visualization(Body1,Body1.q,'cyan',true);
- visualization(Body2,Body2.q,'red',true);
-visualization(Body3,Body3.q,'blue',true);
+%  visualization(Body1,Body1.q,'cyan',true);
+%  visualization(Body2,Body2.q,'red',true);
+% visualization(Body3,Body3.q,'blue',true);
 
-PostProcessing(Body1,Results1,false,false) 
-PostProcessing(Body2,Results2,false,false) 
-PostProcessing(Body3,Results3,false,false)
+% PostProcessing(Body1,Results1,false,false) 
+% PostProcessing(Body2,Results2,false,false) 
+% PostProcessing(Body3,Results3,false,false)
 % 
 % CleanTemp(Body1, true)
 % CleanTemp(Body2, true)
 % CleanTemp(Body3, true)
 
+F_Achilles = Results1(6)+Results3(6)+Results3(6);

@@ -38,6 +38,7 @@ function Body = BuildBeamFaces(Body)
                 % All of it due to complex CS (like Tendon)
                 edges = [(1:NpointCS)' [2:NpointCS 1]'];  % closed loop of edges
                 dt = delaunayTriangulation(pointCS, edges); % creating nice triangulation to avoid collinearity for ending
+                warning('off', 'MATLAB:polyshape:repairedBySimplify');
                 pgon = polyshape(pointCS); % polyshape from boundary points
 
                 tri = dt.ConnectivityList;

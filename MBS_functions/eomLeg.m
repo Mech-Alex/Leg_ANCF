@@ -88,10 +88,15 @@ q_min = 0.001;
 
 % index for current time
 
-index = round(t*1/dt+1)
+index = round(t*1/dt+1);
 
 % length of the vector must be the same as time
 tspan = 0:dt:t_end;
+
+
+% Display current time
+fprintf('Current time: %.4f s (index %d of %d)\n', t, index, length(tspan));
+
 
 input = 5;
 % 1 is stable 
@@ -173,7 +178,7 @@ dot_l_MTC_ta = dot_l_mtc_3points(y(15:21), y(8:14), y(36:42), y(29:35), u_ta3, u
 
 % activity
 
-q_sol = input_curve(index)
+q_sol = input_curve(index);
 q_ta = q_min;
 
 % if error_p > 0

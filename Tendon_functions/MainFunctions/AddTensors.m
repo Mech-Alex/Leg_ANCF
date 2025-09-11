@@ -95,7 +95,7 @@ function Body = AddTensors(Body)
 
     switch Body.FiniteDiference 
        case "AceGen"   
-            disp("For chosen finite difference scheme, deformations are ony finite and displacement-based") 
+            %disp("For chosen finite difference scheme, deformations are ony finite and displacement-based") 
     
             Body.DeformationType = "Finite";
             Body.SolutionBase = "Displacement";

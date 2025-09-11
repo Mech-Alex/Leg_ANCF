@@ -19,7 +19,7 @@ function Body = Geometry(Body,CSName,ApproximationScheme)
                  "ten_Sol_3", "ten_MG_3", "ten_LG_3",...
                  "ten_Sol_3_2", "ten_MG_3_2", "ten_LG_3_2"}
                 ApproximationScheme = "Poigen";
-                disp("For chosen area the approximation scheme switched to Poigen")
+                %disp("For chosen area the approximation scheme switched to Poigen")
                 
                 if (CSName == "C") || (CSName == "Tendon")
                    Body.Length.X = 1;
@@ -36,7 +36,7 @@ function Body = Geometry(Body,CSName,ApproximationScheme)
                filepath = fullfile("CrossSections", CSName + ".m"); 
                if exist(filepath, 'file') == 2
                   ApproximationScheme = "Poigen";
-                  disp("For chosen area the approximation scheme switched to Poigen") 
+                  %disp("For chosen area the approximation scheme switched to Poigen") 
                else
                   error('****** Cross-section is not recognized ******');
                end  
