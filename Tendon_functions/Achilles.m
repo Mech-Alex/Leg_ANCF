@@ -19,13 +19,13 @@ Body3 = DefineElement(Body3,"Beam","ANCF",3333,"None");
 % Material models: GOH (GOH), Neo-Hookean (Neo), 2- and 5- constant Mooney-Rivlin (Mooney2, Mooney5),  Kirhhoff-Saint-Venant (KS).
 Body1 = Materials(Body1,"Neo","Alex"); 
 Body2 = Materials(Body2,"Neo","Alex"); 
-Body3 = Materials(Body3,'Neo',"Alex");
+Body3 = Materials(Body3,"Neo","Alex");
 % Geometry
 Body1 = Geometry(Body1,"ten_Sol_3","Poigen");  % Cross Sections: Rectangular, Oval, C, Tendon
 Body2 = Geometry(Body2,"ten_MG_3","Poigen");  % Itegration Scheme: Poigen, Standard
 Body3 = Geometry(Body3,"ten_LG_3","Poigen");  % Itegration Scheme: Poigen, Standard
 % ########### Set Bodies positions ########################################
-angle = 20;
+angle = 0;
 % Tendon twist
 Center1 = [Body1.CSCenterY, Body1.CSCenterZ];
 Center2 = [Body2.CSCenterY, Body2.CSCenterZ];

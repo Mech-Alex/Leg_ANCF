@@ -15,9 +15,9 @@ Body1 = DefineElement(Body1,"Beam","ANCF",3333,"None");
 Body2 = DefineElement(Body2,"Beam","ANCF",3333,"None");  
 Body3 = DefineElement(Body3,"Beam","ANCF",3333,"None"); 
 % Material models: GOH (GOH), Neo-Hookean (Neo), 2- and 5- constant Mooney-Rivlin (Mooney2, Mooney5),  Kirhhoff-Saint-Venant (KS).
-Body1 = Materials(Body1,"Neo","Sol_old"); 
-Body2 = Materials(Body2,"Neo","MG_old"); 
-Body3 = Materials(Body3,'Neo',"LG_old");
+Body1 = Materials(Body1,"GOH","stiff"); 
+Body2 = Materials(Body2,"GOH","stiff"); 
+Body3 = Materials(Body3,'GOH',"stiff");
 % Geometry
 Body1 = Geometry(Body1,"ten_Sol_3","Poigen");  % Cross Sections: Rectangular, Oval, C, Tendon
 Body2 = Geometry(Body2,"ten_MG_3","Poigen");  % Itegration Scheme: Poigen, Standard
@@ -185,13 +185,13 @@ Boundary3.Type = "reduced"; % there are several types: full, reduced, positions,
 
 % ########## Contact characteristics ######################################
 ContactType = "None"; % Options: "None", "Penalty", "NitscheLin"...
-ContactVariable = 1e1;
+ContactVariable = 1;
 % Body1.ContactRole = "slave"; % Options: "master", "slave"
 % Body2.ContactRole = "master";
 % Body3.ContactRole = "slave";
 
 % %####################### Solving ######################################## 
-steps = 4;  % sub-loading steps
+steps = 20;  % sub-loading steps
 titertot=0;  
 Re=1e-8;                   % Stopping criterion for residual
 imax=20;                      % Maximum number of iterations for Newton's method 
@@ -224,11 +224,11 @@ bcInd = [Body1.bcInd Body2bcIndGlobal Body3bcIndGlobal];
 %style = "cubic";
 style = "linear";
 %START NEWTON'S METHOD   
-for i=1:steps
+for jj=1:steps
     
-    Body1 = SubLoadingDispl(Body1, i, steps, style); 
-    Body2 = SubLoadingDispl(Body2, i, steps, style); 
-    Body3 = SubLoadingDispl(Body3, i, steps, style); 
+    Body1 = SubLoadingDispl(Body1, jj, steps, style); 
+    Body2 = SubLoadingDispl(Body2, jj, steps, style); 
+    Body3 = SubLoadingDispl(Body3, jj, steps, style); 
 
     Applied_disp = [Body1.applied_disp Body2.applied_disp Body3.applied_disp];
 
@@ -477,7 +477,7 @@ for i=1:steps
         titertot=titertot+titer;
 
 
-        if printStatus(deltaf, u_bc, Re, 1, ii, imax, steps, titertot, Gap)
+        if printStatus(deltaf, u_bc, Re, jj, ii, imax, steps, titertot, Gap)
             
             break;  
         end 
