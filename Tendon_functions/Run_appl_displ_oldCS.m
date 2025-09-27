@@ -6,6 +6,7 @@ addpath("Tendon_functions\MeshFunctions")
 addpath("Tendon_functions\InnerForceFunctions")
 addpath(genpath("Tendon_functions\Contact"))
 addpath("Tendon_functions\Postprocessing");
+addpath("Postprocessing\");
 Body1.Name = "Body1";
 Body2.Name = "Body2";
 Body3.Name = "Body3";
