@@ -5,41 +5,74 @@ screenSize = get(0, 'ScreenSize');
 figure('Position', [0 0 screenSize(3) screenSize(4)]);
 
 % Import the STL files
-verticesShin= stlread("Human_tibia_and_fibula_3.STL");
-verticesFemur = stlread("femur_r.stl");
-verticesFoot = stlread("calcn_3.STL");
+verticesShin_initial= stlread("Human_tibia_and_fibula_3.STL");
+verticesFemur_initial = stlread("femur_r.stl");
+verticesFoot_initial = stlread("calcn_3.STL");
+
+% Apply rotation around X-axis by -90 degrees
+%R = eye(3);
+%R = [1 0 0; 0 0 1; 0 -1 0];
+R = [0 0 1; 1 0 0; 0 1 0];
+verticesShinPoints = (R * verticesShin_initial.Points')';
+verticesFemurPoints = (R * verticesFemur_initial.Points')';
+verticesFootPoints = (R * verticesFoot_initial.Points')';
 
 % Extract points and connectivity lists
 
-shinCOM=[3.12171;210.276;0.49989].'; % point from the ankle joint to COM
-pointsShin = verticesShin.Points-shinCOM;
-connectivityShin = verticesShin.ConnectivityList;
+% Center mass coordinates in local CS
+femur_local_CM = [-0.00108622; -0.000633289; -0.000802438];
+shin_local_CM = [0.000499889; 0.00312171; 0.210276];
+foot_local_CM = [0.00272611; 0.0527643; -0.0459727];
+%foot_local_CM = [0; 0; 0];
 
-femurCOM=[-0.633289;-0.802438;-1.08622].';
-pointsFemur = verticesFemur.Points-femurCOM;
-connectivityFemur = verticesFemur.ConnectivityList;
+% Joints location in local CS
 
-footCOM=[52.7643;-45.9727;2.72611].';
-pointsFoot = verticesFoot.Points;
-pointsFoot = pointsFoot-footCOM;
-connectivityFoot = verticesFoot.ConnectivityList;
+%femurCS_to_shin = [3.71941/1000; 210.576/1000; -237.488/1000];
+%shinCS_to_femur = [2.05448/1000; 565.884/1000; 369.835/1000];
+%shinCS_to_foot = [-1.57871/1000; 598.252/1000; -7.11398/1000];
+%footCS_to_shin = [-2.70888/1000; 824.845/1000; 63.5783/1000];
+
+
+%shinCOM=[3.12171;210.276;0.49989].'; % point from the ankle joint to COM
+shinCOM=shin_local_CM'*1000; % point from the ankle joint to COM
+pointsShin = verticesShinPoints-shinCOM;
+connectivityShin = verticesShin_initial.ConnectivityList;
+
+%femurCOM=[-0.633289;-0.802438;-1.08622].';
+femurCOM=femur_local_CM'*1000;
+pointsFemur = verticesFemurPoints-femurCOM;
+connectivityFemur = verticesFemur_initial.ConnectivityList;
+
+%footCOM=[52.7643;-45.9727;2.72611].';
+footCOM=foot_local_CM'*1000;
+pointsFoot = verticesFootPoints-footCOM;
+connectivityFoot = verticesFoot_initial.ConnectivityList;
+
+
+
+y = zeros(1,size(y0,1));
+y = y0';
 
 i=1;
 
-for ii = 1:10:size(y,2)
+% for ii = 1:10:size(y,2)
+for ii = 1:1
     if isnan(y(1,ii))
         break;
     end
     title('Transformed Geometry');
     axis equal;
     grid on;
-    view(2);
+    %view(2);
 
 
     % Calculate dynamic transformations
-    translationFemur = y(ii,1:3)*1000;
-    translationShin = y(ii,1+7:3+7)*1000;
-    translationFoot = y(ii,1+14:3+14)*1000;
+    translationFemur = y(ii,1:3)*1000
+    % translationFemur = [0 0 0];
+    translationShin = y(ii,1+7:3+7)*1000
+    % translationShin = [0 0 0];
+    translationFoot = y(ii,1+14:3+14)*1000
+    %translationFoot = [0 0 0];
 
     RFemur=Rotationmatrix_euler_parameter(y(ii,4),y(ii,5),y(ii,6),y(ii,7));
     RShin=Rotationmatrix_euler_parameter(y(ii,4+7),y(ii,5+7),y(ii,6+7),y(ii,7+7));
@@ -64,23 +97,23 @@ for ii = 1:10:size(y,2)
     pdegplot(modelFemur);
     set(findobj(gca,'Type','Quiver'),'Visible','off');
     set(findall(gca,'Layer','Middle'),'Visible','Off');
-    view(2);
+    view(90,0);
+
     % axis([-100 100 -300 200 -700 100])  
     % MATLAB Script to Convert Figure to Image
-    
-    hold on;
 
+    hold on;
+    % 
     % Create updated geometry for shin
     modelShin = createpde();
     geometryFromMesh(modelShin, transformedVerticesShin', connectivityShin');
     pdegplot(modelShin);
     set(findobj(gca,'Type','Quiver'),'Visible','off');
     set(findall(gca,'Layer','Middle'),'Visible','Off');
-    view(2);
-    % axis([-100 100 -300 200 -700 100])  
 
-    
-
+    view(90,0);
+    % % axis([-100 100 -300 200 -700 100])  
+    % 
     hold on;
     % Create updated geometry for foot
     modelFoot = createpde();
@@ -88,9 +121,13 @@ for ii = 1:10:size(y,2)
     pdegplot(modelFoot);
     set(findobj(gca,'Type','Quiver'),'Visible','off');
     set(findall(gca,'Layer','Middle'),'Visible','Off');
-    view(2);
+    %view(90,0);
     % axis([-100 100 -300 200 -700 100])  
-    % MATLAB Script to Convert Figure to Image
+    %MATLAB Script to Convert Figure to Image
+
+    xlabel('X');
+    ylabel('Y');
+    zlabel('Z');
     hold off;
     F(i) = getframe(gcf) ;
     i=i+1;
