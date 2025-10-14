@@ -18,10 +18,10 @@ g = 0;
 
 % Body 1 - femur 
 m1 = 9.3014e4;    % kg
-%L11 = 0.17;     % m, distance to hip joint
-L11 = 0.223;     % m, distance to hip joint
-% L12 = 0.2258;   % m, distance to knee joint 
-L12 = 0.222;   % m, distance to knee joint 
+L11 = 0.17;     % m, distance to hip joint
+%L11 = 0.207;     % m, distance to hip joint
+L12 = 0.2258;   % m, distance to knee joint 
+%L12 = 0.222;   % m, distance to knee joint 
 % Inertia tensors
 Ix1_ = 0.1412;
 Iy1_ = 0.0351;
@@ -29,10 +29,10 @@ Iz1_ = 0.1339;
 
 % Body 2 - tibia and fibula
 m2 = 3.7075e4;    % kg
-%L21 = 0.1867;   % m, distance to knee joint
-L21 = 0.150559;   % m, distance to knee joint
-%L22 = 0.2433;   % m, distance to ankle joint
-L22 = 0.218242;   % m, distance to ankle joint
+L21 = 0.1867;   % m, distance to knee joint
+%L21 = 0.160;   % m, distance to knee joint
+L22 = 0.2433;   % m, distance to ankle joint
+%L22 = 0.200;   % m, distance to ankle joint
 % Inertia tensors
 Ix2_ = 0.0511;
 Iy2_ = 0.0051;
@@ -43,9 +43,10 @@ Iz2_ = 0.0504;
 % that are combined into one body in this model
 m3 = 1.5666;    % kg
 %L31 = 0.0636;   % m, length distance to ankle joint
-L31 = 0.0533897;   % m, length distance to ankle joint
+%L31 = 0.0533897;   % m, length distance to ankle joint
+L31 = 0.091;
 %H3 = 0.0148;    % m, height distance to ankle joint
-H3 = 0.0477789;    % m, height distance to ankle joint
+H3 = 0.02;    % m, height distance to ankle joint
 % Inertia tensors
 Ix3_ = 0.0052;
 Iy3_ = 0.0025;

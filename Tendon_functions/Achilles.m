@@ -216,11 +216,11 @@ bcInd = [Body1.bcInd Body2bcIndGlobal Body3bcIndGlobal];
 %style = "cubic";
 style = "linear";
 %START NEWTON'S METHOD   
-for i=1:steps
+for stepnumber=1:steps
     
-    Body1 = SubLoadingDispl(Body1, i, steps, style); 
-    Body2 = SubLoadingDispl(Body2, i, steps, style); 
-    Body3 = SubLoadingDispl(Body3, i, steps, style); 
+    Body1 = SubLoadingDispl(Body1, stepnumber, steps, style); 
+    Body2 = SubLoadingDispl(Body2, stepnumber, steps, style); 
+    Body3 = SubLoadingDispl(Body3, stepnumber, steps, style); 
 
     Applied_disp = [Body1.applied_disp Body2.applied_disp Body3.applied_disp];
 
@@ -469,7 +469,7 @@ for i=1:steps
         titertot=titertot+titer;
 
 
-        if printStatus(deltaf, u_bc, Re, 1, ii, imax, steps, titertot, Gap)
+        if printStatus(deltaf, u_bc, Re, stepnumber, ii, imax, steps, titertot, Gap)
             
             break;  
         end 

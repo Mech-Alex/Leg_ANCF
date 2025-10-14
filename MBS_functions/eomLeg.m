@@ -130,7 +130,10 @@ elseif input == 4
     input_curve = pchip(input_ptime, input_points, tspan);
 elseif input == 5
     %input_points = [0.001 0.001 1 1 0.001 0.001];
-    input_points = [0.001 0.2 0.2 0.001 0.001];
+    
+    %input_points = [0.001 0.2 0.2 0.001 0.001];
+    input_points = [0.001 0.2];
+
     %input_points = [0.001 1 1 0.001 0.001];
     %input_points = [0.001 0.001];
     input_ptime = linspace(0,t_end,length(input_points));

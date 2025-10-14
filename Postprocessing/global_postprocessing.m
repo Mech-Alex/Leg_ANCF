@@ -5,24 +5,32 @@ screenSize = get(0, 'ScreenSize');
 figure('Position', [0 0 screenSize(3) screenSize(4)]);
 
 % Import the STL files
-verticesShin_initial= stlread("Human_tibia_and_fibula_3.STL");
-verticesFemur_initial = stlread("femur_r.stl");
-verticesFoot_initial = stlread("calcn_3.STL");
+%verticesShin_initial= stlread("Human_tibia_and_fibula_3.STL");
+verticesShin_initial= stlread("tibia_r_from_OpenSim.stl");
+verticesFemur_initial = stlread("femur_r_from_OpenSim.stl");
+verticesFoot_initial = stlread("foot_from_OpenSim_fix.stl");
 
 % Apply rotation around X-axis by -90 degrees
 %R = eye(3);
 %R = [1 0 0; 0 0 1; 0 -1 0];
 R = [0 0 1; 1 0 0; 0 1 0];
-verticesShinPoints = (R * verticesShin_initial.Points')';
-verticesFemurPoints = (R * verticesFemur_initial.Points')';
-verticesFootPoints = (R * verticesFoot_initial.Points')';
+verticesShinPoints = (R * 1000 * verticesShin_initial.Points')';
+verticesFemurPoints = (R * 1000 * verticesFemur_initial.Points')';
+verticesFootPoints = (R * 1000* verticesFoot_initial.Points')';
 
 % Extract points and connectivity lists
 
 % Center mass coordinates in local CS
-femur_local_CM = [-0.00108622; -0.000633289; -0.000802438];
-shin_local_CM = [0.000499889; 0.00312171; 0.210276];
-foot_local_CM = [0.00272611; 0.0527643; -0.0459727];
+%femur_local_CM = [-0.00108622; -0.000633289; -0.000802438];
+%femur_local_CM = [4.97468e-06; -0.000206997; 1.5943e-05];
+femur_local_CM = 1000*[1.5943e-05; 4.97468e-06; -0.000206997];
+%femur_local_CM = [0; 0; 0];
+%shin_local_CM = [0.000499889; 0.00312171; 0.210276];
+shin_local_CM = 1000*[7.00411e-06; 5.94449e-06; -0.000191246];
+
+%foot_local_CM = [0.00272611; 0.0527643; -0.0459727];
+foot_local_CM = 1000*[-4.07483e-06; 8.24491e-05; 1.57924e-05];
+
 %foot_local_CM = [0; 0; 0];
 
 % Joints location in local CS
@@ -68,9 +76,9 @@ for ii = 1:1
 
     % Calculate dynamic transformations
     translationFemur = y(ii,1:3)*1000
-    % translationFemur = [0 0 0];
+    %translationFemur = [0 0 0];
     translationShin = y(ii,1+7:3+7)*1000
-    % translationShin = [0 0 0];
+    %translationShin = [0 0 0];
     translationFoot = y(ii,1+14:3+14)*1000
     %translationFoot = [0 0 0];
 
@@ -97,13 +105,13 @@ for ii = 1:1
     pdegplot(modelFemur);
     set(findobj(gca,'Type','Quiver'),'Visible','off');
     set(findall(gca,'Layer','Middle'),'Visible','Off');
-    view(90,0);
+    %view(90,0);
 
     % axis([-100 100 -300 200 -700 100])  
     % MATLAB Script to Convert Figure to Image
 
     hold on;
-    % 
+
     % Create updated geometry for shin
     modelShin = createpde();
     geometryFromMesh(modelShin, transformedVerticesShin', connectivityShin');
@@ -112,8 +120,8 @@ for ii = 1:1
     set(findall(gca,'Layer','Middle'),'Visible','Off');
 
     view(90,0);
-    % % axis([-100 100 -300 200 -700 100])  
-    % 
+    %axis([-100 100 -300 200 -700 100])  
+
     hold on;
     % Create updated geometry for foot
     modelFoot = createpde();
@@ -122,7 +130,7 @@ for ii = 1:1
     set(findobj(gca,'Type','Quiver'),'Visible','off');
     set(findall(gca,'Layer','Middle'),'Visible','Off');
     %view(90,0);
-    % axis([-100 100 -300 200 -700 100])  
+    %axis([-100 100 -300 200 -700 100])  
     %MATLAB Script to Convert Figure to Image
 
     xlabel('X');
