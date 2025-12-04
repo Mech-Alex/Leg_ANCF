@@ -1,4 +1,4 @@
-function F_Achilles = Achilles(Tendon_displacement)    
+function [F_Achilles,Body1,Body2,Body3] = Achilles(Tendon_displacement)    
 
 steps = max(round(Tendon_displacement/2e-4), 1);  % sub-loading steps
 
@@ -521,4 +521,4 @@ zlabel('Z [m]','FontName','Times New Roman','FontSize',20);
 % CleanTemp(Body2, true)
 % CleanTemp(Body3, true)
 
-F_Achilles = Results1(6)+Results3(6)+Results3(6);
+F_Achilles = Results1(6)+Results2(6)+Results3(6);

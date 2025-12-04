@@ -1,4 +1,5 @@
-function [dydt] = eomLeg(t,y,parameters)
+function [dydt, Body1, Body2, Body3] = eomLeg(t,y,parameters)
+%[t,y] = ode45(@eomLeg, tspan, y0, options, parameters);
 % solve equations of motions
 
 R11 = y(1);
@@ -131,8 +132,8 @@ elseif input == 4
 elseif input == 5
     %input_points = [0.001 0.001 1 1 0.001 0.001];
     
-    %input_points = [0.001 0.2 0.2 0.001 0.001];
-    input_points = [0.001 0.2];
+    input_points = [0.001 0.9 0.9 0.001];
+    %input_points = [0.001 1];
 
     %input_points = [0.001 1 1 0.001 0.001];
     %input_points = [0.001 0.001];
@@ -269,7 +270,7 @@ q_ta = q_min;
 
 
 %[F_MTC_sol, dot_l_CE_sol, F_elements_sol] = mtc_model_matlab(l_CE_sol,...
-[F_MTC_sol, dot_l_CE_sol, F_elements_sol, Displ] = mtc_model_w_tendon(l_CE_sol,...
+[F_MTC_sol, dot_l_CE_sol, F_elements_sol, Displ,Body1,Body2,Body3] = mtc_model_w_tendon(l_CE_sol,...
     l_MTC_sol, dot_l_MTC_sol, q_sol, muscle_sol);
 
 %F_MTC_sol = 0.5305;
@@ -347,5 +348,7 @@ dydt(76) = F_MTC_sol;
 dydt(77) = Displ;
 
 dydt = dydt(:);
+
+%%disp(Body1);
 
 end

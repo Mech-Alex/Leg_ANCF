@@ -6,15 +6,23 @@ figure('Position', [0 0 screenSize(3) screenSize(4)]);
 
 % Import the STL files
 %verticesShin_initial= stlread("Human_tibia_and_fibula_3.STL");
-verticesShin_initial= stlread("tibia_r_from_OpenSim.stl");
+verticesShin_initial= stlread("tibia_r_from_OpenSim_smooth.stl");
+%verticesShin_initial= stlread("tibia_r_LiArnold.stl");
 verticesFemur_initial = stlread("femur_r_from_OpenSim.stl");
-verticesFoot_initial = stlread("foot_from_OpenSim_fix.stl");
+verticesFoot_initial = stlread("foot_from_OpenSim_fix_smooth.stl");
+
+
+% Define custom scale factors
+scaleShin = [1, 1.1, 1];  % scale X, Y, Z
+
+% Apply scaling to tibia vertices
+scaledVerticesShin = verticesShin_initial.Points .* scaleShin;
 
 % Apply rotation around X-axis by -90 degrees
 %R = eye(3);
 %R = [1 0 0; 0 0 1; 0 -1 0];
 R = [0 0 1; 1 0 0; 0 1 0];
-verticesShinPoints = (R * 1000 * verticesShin_initial.Points')';
+verticesShinPoints = (R * 1000* scaledVerticesShin')';
 verticesFemurPoints = (R * 1000 * verticesFemur_initial.Points')';
 verticesFootPoints = (R * 1000* verticesFoot_initial.Points')';
 
@@ -23,13 +31,19 @@ verticesFootPoints = (R * 1000* verticesFoot_initial.Points')';
 % Center mass coordinates in local CS
 %femur_local_CM = [-0.00108622; -0.000633289; -0.000802438];
 %femur_local_CM = [4.97468e-06; -0.000206997; 1.5943e-05];
-femur_local_CM = 1000*[1.5943e-05; 4.97468e-06; -0.000206997];
+%femur_local_CM = 1000*[1.5943e-05; 4.97468e-06; -0.000206997];
+femur_local_CM = 1000*[ 1.5943e-05; 4.97468e-06; -0.000206997];
+
 %femur_local_CM = [0; 0; 0];
 %shin_local_CM = [0.000499889; 0.00312171; 0.210276];
-shin_local_CM = 1000*[7.00411e-06; 5.94449e-06; -0.000191246];
+%shin_local_CM = 1000*[7.00411e-06; 5.94449e-06; -0.000191246];
+shin_local_CM = 1000*[6.9501e-06; 5.79781e-06; -0.000196268*1.2];
+
 
 %foot_local_CM = [0.00272611; 0.0527643; -0.0459727];
-foot_local_CM = 1000*[-4.07483e-06; 8.24491e-05; 1.57924e-05];
+%foot_local_CM = 1000*[-4.07483e-06; 8.24491e-05; 1.57924e-05];
+foot_local_CM = 1000*[4.01932e-06; 8.01158e-05; 1.59065e-05];
+
 
 %foot_local_CM = [0; 0; 0];
 
@@ -58,14 +72,14 @@ connectivityFoot = verticesFoot_initial.ConnectivityList;
 
 
 
-y = zeros(1,size(y0,1));
-y = y0';
+% y = zeros(1,size(y0,1));
+% y = y0';
 
 i=1;
 
-% for ii = 1:10:size(y,2)
+%for ii = 1:size(y,1)
 for ii = 1:1
-    if isnan(y(1,ii))
+    if isnan(y(ii,1))
         break;
     end
     title('Transformed Geometry');
@@ -75,11 +89,11 @@ for ii = 1:1
 
 
     % Calculate dynamic transformations
-    translationFemur = y(ii,1:3)*1000
+    translationFemur = y(ii,1:3)*1000;
     %translationFemur = [0 0 0];
-    translationShin = y(ii,1+7:3+7)*1000
-    %translationShin = [0 0 0];
-    translationFoot = y(ii,1+14:3+14)*1000
+    translationShin = y(ii,1+7:3+7)*1000;
+    %translationShin = [0 0 -L21-L12-L11+0.04]*1000;
+    translationFoot = y(ii,1+14:3+14)*1000;
     %translationFoot = [0 0 0];
 
     RFemur=Rotationmatrix_euler_parameter(y(ii,4),y(ii,5),y(ii,6),y(ii,7));
@@ -129,42 +143,82 @@ for ii = 1:1
     pdegplot(modelFoot);
     set(findobj(gca,'Type','Quiver'),'Visible','off');
     set(findall(gca,'Layer','Middle'),'Visible','Off');
-    %view(90,0);
+    view(90,0);
     %axis([-100 100 -300 200 -700 100])  
     %MATLAB Script to Convert Figure to Image
 
     xlabel('X');
     ylabel('Y');
     zlabel('Z');
+
+
+    % Adding visualization of the deformed tendon
+
+     mass_cm1 = [y(ii,1); y(ii,2); y(ii,3)]; 
+     mass_cm2 = [y(ii,8); y(ii,9); y(ii,10)];
+     mass_cm3 = [y(ii,15); y(ii,16); y(ii,17)]; 
+     A1 = Af1(y(ii,4), y(ii,5), y(ii,6),y(ii,7));
+     A2 = Af2(y(ii,11), y(ii,12), y(ii,13),y(ii,14));
+     A3 = Af3(y(ii,18), y(ii,19), y(ii,20),y(ii,21));
+ 
+     p1 = [0; 0; L11];
+     p2 = [0; 0; -L12];
+     p3 = [0; 0; L21];
+     p4 = [0;  0; -L22];
+     p5 = [0; -L31; 0];
+     p6 = [0; L31; 0];
+     % p5 = [0; -0.1126; -0.0027];
+     % p6 = [0; 0.1; -0.0027];
+     p1v = mass_cm1 + A1*p1;
+     p2v = mass_cm1 + A1*p2;
+     p3v = mass_cm2 + A2*p3;
+     p4v = mass_cm2 + A2*p4;
+     p5v = mass_cm3 + A3*p5;
+     p6v = mass_cm3 + A3*p6;
+%     pta3 = mass_cm3 + A3*u_ta3;
+%     pta2 = mass_cm2 + A2*u_ta2;
+    u_sol1 = [0; -0.086; 0.003];
+     psol3 = mass_cm3 + A3*u_sol1;
+     psol2 = mass_cm2 + A2*u_sol2;
+     %tendon_visualization(Body1,Body1.q0*1000,'cyan',true,(psol2-psol3)*1000,psol3*1000);
+     %tendon_visualization(Body2,Body2.q0*1000,'red',true,(psol2-psol3)*1000,psol3*1000);
+     %tendon_visualization(Body3,Body3.q0*1000,'blue',true,(psol2-psol3)*1000,psol3*1000);
+     tendon_visualization(Body1,Body1.q0*1000,'cyan',true,(psol2-psol3)*1000,psol3*1000);
+     tendon_visualization(Body2,Body2.q0*1000,'red',true,(psol2-psol3)*1000,psol3*1000);
+     tendon_visualization(Body3,Body3.q0*1000,'blue',true,(psol2-psol3)*1000,psol3*1000);
+     plot3([psol3(1)*1000 psol2(1)*1000],[psol3(2)*1000 psol2(2)*1000],[psol3(3)*1000 psol2(3)*1000],'r-','LineWidth',1)
+     
     hold off;
     F(i) = getframe(gcf) ;
     i=i+1;
     drawnow
 end
 
-writerObj = VideoWriter('myVideo.mp4', 'MPEG-4');
-writerObj.FrameRate = 10;
-% open the video writer
-open(writerObj);
-% write the frames to the video
-for i=1:length(F)
-    % convert the image to a frame
-    frame = F(i) ;    
-    writeVideo(writerObj, frame);
-end
-% close the writer object
-close(writerObj);
+%visualization(Body1,Body1.q0,'cyan',true);
+
+% writerObj = VideoWriter('myVideo.mp4', 'MPEG-4');
+% writerObj.FrameRate = 10;
+% % open the video writer
+% open(writerObj);
+% % write the frames to the video
+% for i=1:length(F)
+%     % convert the image to a frame
+%     frame = F(i) ;    
+%     writeVideo(writerObj, frame);
+% end
+% % close the writer object
+% close(writerObj);
 
 
 
-%%%%% Old postprocessing script below %%%%%%
-
-%figure(2); % Animation
+% %%%%% Old postprocessing script below %%%%%%
+% 
+% figure(2); % Animation
 % Af1 = matlabFunction(body(1).A);
 % Af2 = matlabFunction(body(2).A);
 % Af3 = matlabFunction(body(3).A);
-%for ii = 1:floor((1/dt)/200):length(t)
-
+% for ii = 1:floor((1/dt)/200):length(t)
+% 
 % myVideo = VideoWriter('myVideoFile','Motion JPEG AVI'); %open video file
 % myVideo.FrameRate = 10;  %can adjust this, 5 - 10 works well for me
 % open(myVideo)
@@ -224,13 +278,13 @@ close(writerObj);
 % end    
 % close(myVideo)
 % %% 
-% 
+% % 
 % %plot(t,F_MTC_sol,'red',t,F_MTC_ta,'blue','LineWidth',2);
 % plot(t,Tendon_strain_vec*100,'red','LineWidth',2);
 % ax=gca;
 % ax.FontSize = 18;
 % xlim([0 0.2]);
-% 
+
 % %xlim([0 600])
 % %xticks(0:100:600)
 % %ylim([0 1.5])
@@ -241,8 +295,9 @@ close(writerObj);
 % 
 % %legend({'Soleus','Tibialis anterior',},'FontSize',18)
 % 
-% figure
-% plot(t,q_sol_vec,'red','LineWidth',2);
+%  figure
+%  plot(t,q_sol_vec,'red','LineWidth',2);
+
 % % Test if total energy is constant before adding muscle forces
 % 
 % % Ek = zeros(1,length(t));

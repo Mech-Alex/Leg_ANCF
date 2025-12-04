@@ -49,7 +49,7 @@
 % Modification made by ASN - the SEE force is calculated on the basis of
 % ANCF FE tendon simulation instead of the original equation
 
-function [F_MTC, dot_l_CE, F_elements, Displacement] = mtc_model_w_tendon(l_CE, l_MTC, dot_l_MTC, q, mus_Param)
+function [F_MTC, dot_l_CE, F_elements, Displacement,Body1,Body2,Body3] = mtc_model_w_tendon(l_CE, l_MTC, dot_l_MTC, q, mus_Param)
 
 % Isometric force (Force length relation)
 if l_CE >= mus_Param.CE.l_CEopt %descending branch
@@ -71,9 +71,10 @@ Tendon_displacement = l_SEE - mus_Param.SEE.l_SEE0;
 %if (l_SEE>mus_Param.SEE.l_SEE0) 
 if (Tendon_displacement>0) 
     %mus_Param.SEE.l_SEE0;
-    F_SEE = Achilles(Tendon_displacement);  
+    [F_SEE,Body1,Body2,Body3] = Achilles(Tendon_displacement);  
 else %slack length
-    F_SEE = 0;
+    [F_SEE,Body1,Body2,Body3] = Achilles(0);
+    %F_SEE = 0;
 end
 
 % Hill Parameters concentric contraction
